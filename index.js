@@ -34,3 +34,7 @@ controller.hears(/(deploy|confirm|rollback) ([a-zA-Z][a-zA-Z0-9-]*)\s*$/, SLACK_
   const envStr = JSON.stringify(Object.assign(env));
   req.end(envStr);
 });
+
+controller.hears(/ping/, SLACK_MESSAGE_EVENTS, (bot, message) => {
+  bot.reply(message, 'pong');
+});
