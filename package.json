@@ -1,0 +1,11 @@
+{
+  "name": "woz",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:saikohtk/woz.git",
+  "author": "Hidekazu Kobayashi <kobahide789@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "botkit": "^0.5.6"
+  }
+}
