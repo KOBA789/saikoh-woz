@@ -21,15 +21,21 @@ controller.spawn({
   token: SLACK_BOT_TOKEN,
 }).startRTM();
 
-controller.hears(/(deploy|confirm|rollback) ([a-zA-Z][a-zA-Z0-9-]*)\s*$/, SLACK_MESSAGE_EVENTS, (bot, message) => {
+controller.hears(/(deploy|rollback) ([a-zA-Z][a-zA-Z0-9-]*)\s*$/, SLACK_MESSAGE_EVENTS, (bot, message) => {
   const command = message.match[1];
   const appName = message.match[2];
-  console.log(command, appName);
+  const taskName = `${appName}-${command}`;
+  bot.reply(message, `:soon: ${taskName}`);
   const env = DEPLOY_ENV.map(name => ({ [name]: process.env[name] })).reduce((map, pair) => Object.assign(map, pair));
-  const req = http.request(Object.assign(url.parse(`http://${STEVED_HOST}/jobs/${appName}-${command}`), {
+  const req = http.request(Object.assign(url.parse(`http://${STEVED_HOST}/jobs/${taskName}`), {
     method: 'POST'
   }), (res) => {
     res.pipe(process.stdout);
+    switch (res.statusCode) {
+    case 404:
+      bot.reply(message, `:boom: ${taskName} :u7121: :thinking_face:`);
+      break;
+    }
   });
   const envStr = JSON.stringify(Object.assign(env));
   req.end(envStr);
